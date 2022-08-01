@@ -16,7 +16,8 @@ jobs:
       - name: build
         run: |
           scripts/docker-run.sh scripts/buildappimage.sh
-          if [ -f build/*.AppImage ] ; then
+          ls build/*
+          if [ ! -f build/*.AppImage ] ; then
             exit 1
           fi
       
