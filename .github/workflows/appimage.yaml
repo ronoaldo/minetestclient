@@ -12,12 +12,13 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
-      
+
       - name: build
         run: |
-          scripts/docker-run.sh scripts/buildappimage.sh
+          VERSION=${{ github.ref_name }} scripts/docker-run.sh scripts/buildappimage.sh
           ls build/*
           if [ ! -f build/*.AppImage ] ; then
+            echo "No AppImage was built. Aborting."
             exit 1
           fi
       

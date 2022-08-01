@@ -2,11 +2,35 @@
 set -e
 set -x
 
-export MINETEST_VERSION=${MINETEST_VERSION:-master}
-export MINETEST_GAME_VERSION=${MINETEST_GAME_VERSION:-master}
-export LUAJIT_VERSION=${LUAJIT_VERSION:-v2.1.0-beta4-mercurio}
-export VERSION=${VERSION:-5.6.0-ronoaldo}
+# Base build directory
 export WORKSPACE="$(readlink -f $(dirname $0)/..)"
+
+# Version -> branch calculation
+export VERSION=${VERSION:dev}
+export BRANCH=master
+case $VERSION in
+    [0-9].[0-9].[0-9]|[0-9].[0-9][0-9].[0-9]|[0-9].[0-9].[0-9][0-9]|[0-9].[0-9][0-9].[0-9][0-9])
+        echo "Version detected as stable build. Using tag ${VERSION}."
+        export BRANCH=${VERSION}
+    ;;
+    *rc*|*beta*)
+        echo "Version detected as release candidate build. Using branch master."
+    ;;
+    *)
+        echo "Version detected as a development build. Using branch master."
+    ;;
+esac
+export MINETEST_VERSION="${BRANCH}"
+export MINETEST_GAME_VERSION="${BRANCH}"
+export MINETEST_IRRLICHT_VERSION="master"
+# TODO(ronoaldo) detect from Github Release
+case ${BRANCH} in
+    5.5.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt4 ;;
+    5.5.1) export MINETEST_IRRLICHT_VERSION=1.9.0mt5 ;;
+esac
+
+# Using a recent LuaJIT build
+export LUAJIT_VERSION="a7d0265" # a7d0265480c662964988f83d4e245bf139eb7cc0
 
 install_appimage_builder() {
     apt-get update
@@ -27,15 +51,16 @@ install_appimage_builder() {
     popd
 }
 
+git_clone() { git clone "$1" "$2" && git -C "$2" checkout "$3" ; }
+
 download_sources() {
     mkdir -p /tmp/work/build
     
     pushd /tmp/work
-    git clone --depth=1 -b ${LUAJIT_VERSION} https://github.com/ronoaldo/LuaJIT.git ./luajit
-    git clone --depth=1 -b ${MINETEST_VERSION} https://github.com/ronoaldo/minetest.git ./minetest
-    git clone --depth=1 -b ${MINETEST_GAME_VERSION} https://github.com/ronoaldo/minetest_game.git ./minetest/games/minetest_game
-    # TODO(ronoaldo): add specific commit/version
-    git clone --depth=1 https://github.com/minetest/irrlicht ./minetest/lib/irrlichtmt
+    git_clone https://github.com/LuaJIT/LuaJIT.git          ./luajit                       ${LUAJIT_VERSION}
+    git_clone https://github.com/minetest/minetest.git      ./minetest                     ${MINETEST_VERSION} 
+    git_clone https://github.com/minetest/minetest_game.git ./minetest/games/minetest_game ${MINETEST_GAME_VERSION} 
+    git_clone https://github.com/minetest/irrlicht          ./minetest/lib/irrlichtmt      ${MINETEST_IRRLICHT_VERSION}
     popd
 }
 
@@ -54,7 +79,7 @@ install_build_dependencies() {
 build() {
     # Build LuaJIT
     pushd /tmp/work/luajit
-    sed -e "s/PREREL=.*/PREREL=-beta4-mercurio/g" -i Makefile
+    sed -e "s/PREREL=.*/PREREL=-beta4/g" -i Makefile
     make PREFIX=/usr &&\
     make install PREFIX=/usr
     popd
@@ -63,7 +88,7 @@ build() {
     pushd /tmp/work/build
     cmake /tmp/work/minetest \
         -DCMAKE_INSTALL_PREFIX=/usr \
-        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_BUILD_TYPE=Debug \
         -DBUILD_SERVER=FALSE \
         -DBUILD_CLIENT=TRUE \
         -DBUILD_UNITTESTS=FALSE \
