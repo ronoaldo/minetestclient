@@ -6,7 +6,7 @@ WORK=$(mktemp -d)
 docker run --rm -it \
     -v $PWD:/workspace \
     -v $WORK:/tmp/work \
-    debian:bullseye /workspace/scripts/$1 2>&1 | tee $LOG
+    debian:bullseye /workspace/$1 2>&1 | tee $LOG
 
 echo "Build log: $LOG"
 echo "Build output: $WORK"

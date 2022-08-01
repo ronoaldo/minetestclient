@@ -6,6 +6,7 @@ export MINETEST_VERSION=${MINETEST_VERSION:-master}
 export MINETEST_GAME_VERSION=${MINETEST_GAME_VERSION:-master}
 export LUAJIT_VERSION=${LUAJIT_VERSION:-v2.1.0-beta4-mercurio}
 export VERSION=${VERSION:-5.6.0-ronoaldo}
+export WORKSPACE="$(readlink -f $(dirname $0)/..)"
 
 install_appimage_builder() {
     apt-get update
@@ -74,10 +75,10 @@ bundle_appimage() {
     pushd /tmp/work/build
     make install DESTDIR=AppDir
     ls -l /tmp/work/minetest/AppImageBuilder.yml
-    appimage-builder --recipe /workspace/AppImageBuilder.yml
-    mkdir -p /workspace/build
-    mv *.AppImage* /workspace/build
-    chmod a+x /workspace/build/*.AppImage
+    appimage-builder --recipe $WORKSPACE/AppImageBuilder.yml
+    mkdir -p $WORKSPACE/build
+    mv *.AppImage* $WORKSPACE/build
+    chmod a+x $WORKSPACE/build/*.AppImage
     popd
 }
 
