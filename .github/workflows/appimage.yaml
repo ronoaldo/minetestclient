@@ -14,7 +14,11 @@ jobs:
         uses: actions/checkout@v3
       
       - name: build
-        run: scripts/docker-run.sh scripts/buildappimage.sh
+        run: |
+          scripts/docker-run.sh scripts/buildappimage.sh
+          if [ -f build/*.AppImage ] ; then
+            exit 1
+          fi
       
       - name: upload
         uses: actions/upload-artifact@v3
