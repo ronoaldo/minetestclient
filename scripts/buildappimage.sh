@@ -92,7 +92,7 @@ build() {
         -DBUILD_SERVER=FALSE \
         -DBUILD_CLIENT=TRUE \
         -DBUILD_UNITTESTS=FALSE \
-        -DVERSION_EXTRA=ronoaldo
+        -DVERSION_EXTRA=unofficial
     make -j$(nproc)
     popd
 }
