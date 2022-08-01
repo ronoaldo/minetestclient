@@ -34,6 +34,7 @@ download_sources() {
     git clone --depth=1 -b ${LUAJIT_VERSION} https://github.com/ronoaldo/LuaJIT.git ./luajit
     git clone --depth=1 -b ${MINETEST_VERSION} https://github.com/ronoaldo/minetest.git ./minetest
     git clone --depth=1 -b ${MINETEST_GAME_VERSION} https://github.com/ronoaldo/minetest_game.git ./minetest/games/minetest_game
+    # TODO(ronoaldo): add specific commit/version
     git clone --depth=1 https://github.com/minetest/irrlicht ./minetest/lib/irrlichtmt
     popd
 }
