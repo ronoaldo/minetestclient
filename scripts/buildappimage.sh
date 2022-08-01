@@ -29,9 +29,6 @@ case ${BRANCH} in
     5.5.1) export MINETEST_IRRLICHT_VERSION=1.9.0mt5 ;;
 esac
 
-# Using a recent LuaJIT build
-export LUAJIT_VERSION="a7d0265" # a7d0265480c662964988f83d4e245bf139eb7cc0
-
 install_appimage_builder() {
     apt-get update
     apt-get install wget -yq
@@ -57,7 +54,6 @@ download_sources() {
     mkdir -p /tmp/work/build
     
     pushd /tmp/work
-    git_clone https://github.com/LuaJIT/LuaJIT.git          ./luajit                       ${LUAJIT_VERSION}
     git_clone https://github.com/minetest/minetest.git      ./minetest                     ${MINETEST_VERSION} 
     git_clone https://github.com/minetest/minetest_game.git ./minetest/games/minetest_game ${MINETEST_GAME_VERSION} 
     git_clone https://github.com/minetest/irrlicht          ./minetest/lib/irrlichtmt      ${MINETEST_IRRLICHT_VERSION}
@@ -68,7 +64,7 @@ install_build_dependencies() {
     apt-get update
     apt-get install build-essential cmake git \
         gettext libbz2-dev libcurl4-gnutls-dev \
-        libfreetype6-dev libglu1-mesa-dev libgmp-dev \
+        libfreetype6-dev libglu1-mesa-dev libgmp-dev libluajit-5.1-dev \
         libjpeg-dev libjsoncpp-dev libleveldb-dev libxi-dev \
         libogg-dev libopenal-dev libpng-dev libspatialindex-dev \
         libsqlite3-dev libvorbis-dev libx11-dev libxxf86vm-dev libzstd-dev \
@@ -77,14 +73,6 @@ install_build_dependencies() {
 }
 
 build() {
-    # Build LuaJIT
-    pushd /tmp/work/luajit
-    sed -e "s/PREREL=.*/PREREL=-beta4/g" -i Makefile
-    make PREFIX=/usr
-    make install
-    make install DESTDIR=AppDir
-    popd
-
     # Build Minetest
     pushd /tmp/work/build
     cmake /tmp/work/minetest \

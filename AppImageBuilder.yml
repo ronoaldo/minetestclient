@@ -16,7 +16,7 @@ AppDir:
       - /usr/share/locale:$APPDIR/usr/share/locale
       - /usr/share/minetest:$APPDIR/usr/share/minetest
     env:
-      APPDIR_LIBRARY_PATH: $APPDIR/usr/lib/x86_64-linux-gnu
+      APPDIR_LIBRARY_PATH: $APPDIR/usr/lib/x86_64-linux-gnu:$APPDIR/usr/lib:$APPDIR/lib/x86_64-linux-gnu:$APPDIR/lib/x86_64
 
   apt:
     arch: amd64
@@ -34,14 +34,15 @@ AppDir:
       - libjpeg62-turbo
       - libjsoncpp24
       - libleveldb1d
+      - libluajit-5.1-2
       - libopenal1
       - libpng16-16
-      - libspatialindex
+      - libspatialindex6
       - libsqlite3-0
       - libstdc++6
       - libvorbisfile3
       - libx11-6
-      - libxau-6
+      - libxau6
       - libxcb1
       - libxdmcp6
       - libxi6
