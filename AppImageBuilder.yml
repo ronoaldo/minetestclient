@@ -36,14 +36,18 @@ AppDir:
       - libleveldb1d
       - libopenal1
       - libpng16-16
+      - libspatialindex
       - libsqlite3-0
       - libstdc++6
       - libvorbisfile3
       - libx11-6
+      - libxau-6
+      - libxcb1
+      - libxdmcp6
       - libxi6
       - libxxf86vm1
+      - libzstd1
       - zlib1g
-      - zstd
 
   files:
     exclude:

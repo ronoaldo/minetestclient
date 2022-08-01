@@ -70,7 +70,7 @@ install_build_dependencies() {
         gettext libbz2-dev libcurl4-gnutls-dev \
         libfreetype6-dev libglu1-mesa-dev libgmp-dev \
         libjpeg-dev libjsoncpp-dev libleveldb-dev libxi-dev \
-        libogg-dev libopenal-dev libpng-dev libpq-dev libspatialindex-dev \
+        libogg-dev libopenal-dev libpng-dev libspatialindex-dev \
         libsqlite3-dev libvorbis-dev libx11-dev libxxf86vm-dev libzstd-dev \
         zlib1g-dev git unzip gtk-update-icon-cache -yq
     apt-get clean
@@ -80,8 +80,9 @@ build() {
     # Build LuaJIT
     pushd /tmp/work/luajit
     sed -e "s/PREREL=.*/PREREL=-beta4/g" -i Makefile
-    make PREFIX=/usr &&\
-    make install PREFIX=/usr
+    make PREFIX=/usr
+    make install
+    make install DESTDIR=AppDir
     popd
 
     # Build Minetest
