@@ -27,6 +27,7 @@ export MINETEST_IRRLICHT_VERSION="master"
 case ${BRANCH} in
     5.5.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt4 ;;
     5.5.1) export MINETEST_IRRLICHT_VERSION=1.9.0mt5 ;;
+    5.6.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt7 ;;
 esac
 
 install_appimage_builder() {
