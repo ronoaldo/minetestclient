@@ -9,17 +9,22 @@ export WORKSPACE="$(readlink -f $(dirname $0)/..)"
 export VERSION=${VERSION:dev}
 export BRANCH=master
 case $VERSION in
+    [0-9].[0-9].[0-9]-[0-9]|[0-9].[0-9][0-9].[0-9]-[0-9]|[0-9].[0-9].[0-9][0-9]-[0-9]|[0-9].[0-9][0-9].[0-9][0-9]-[0-9])
+        export BRANCH=${VERSION%%-*}
+        echo "Version ${VERSION} detected as stable build, with increment. Using tag ${BRANCH}."
+    ;;
     [0-9].[0-9].[0-9]|[0-9].[0-9][0-9].[0-9]|[0-9].[0-9].[0-9][0-9]|[0-9].[0-9][0-9].[0-9][0-9])
-        echo "Version detected as stable build. Using tag ${VERSION}."
         export BRANCH=${VERSION}
+        echo "Version ${VERSION} detected as stable build. Using tag ${BRANCH}."
     ;;
     *rc*|*beta*)
-        echo "Version detected as release candidate build. Using branch master."
+        echo "Version ${VERSION} detected as release candidate build. Using branch master."
     ;;
     *)
         echo "Version detected as a development build. Using branch master."
     ;;
 esac
+exit 1
 export MINETEST_VERSION="${BRANCH}"
 export MINETEST_GAME_VERSION="${BRANCH}"
 export MINETEST_IRRLICHT_VERSION="master"
@@ -78,7 +83,7 @@ build() {
     pushd /tmp/work/build
     cmake /tmp/work/minetest \
         -DCMAKE_INSTALL_PREFIX=/usr \
-        -DCMAKE_BUILD_TYPE=Debug \
+        -DCMAKE_BUILD_TYPE=RelWithDebInfo \
         -DBUILD_SERVER=FALSE \
         -DBUILD_CLIENT=TRUE \
         -DBUILD_UNITTESTS=FALSE \
@@ -90,7 +95,6 @@ build() {
 bundle_appimage() {
     pushd /tmp/work/build
     make install DESTDIR=AppDir
-    ls -l /tmp/work/minetest/AppImageBuilder.yml
     appimage-builder --recipe $WORKSPACE/AppImageBuilder.yml
     mkdir -p $WORKSPACE/build
     mv *.AppImage* $WORKSPACE/build
