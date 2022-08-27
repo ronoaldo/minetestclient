@@ -24,7 +24,7 @@ case $VERSION in
         echo "Version detected as a development build. Using branch master."
     ;;
 esac
-exit 1
+
 export MINETEST_VERSION="${BRANCH}"
 export MINETEST_GAME_VERSION="${BRANCH}"
 export MINETEST_IRRLICHT_VERSION="master"
