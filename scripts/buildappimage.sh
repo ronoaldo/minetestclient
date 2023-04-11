@@ -30,10 +30,11 @@ export MINETEST_GAME_VERSION="${BRANCH}"
 export MINETEST_IRRLICHT_VERSION="master"
 # TODO(ronoaldo) detect from Github Release
 case ${BRANCH} in
-    5.5.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt4 ;;
-    5.5.1) export MINETEST_IRRLICHT_VERSION=1.9.0mt5 ;;
-    5.6.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt7 ;;
-    5.6.1) export MINETEST_IRRLICHT_VERSION=1.9.0mt8 ;;
+    5.5.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt4  ;;
+    5.5.1) export MINETEST_IRRLICHT_VERSION=1.9.0mt5  ;;
+    5.6.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt7  ;;
+    5.6.1) export MINETEST_IRRLICHT_VERSION=1.9.0mt8  ;;
+    5.7.0) export MINETEST_IRRLITCH_VERSION=1.9.0mt10 ;;
     master|main) export MINETEST_IRRLICHT_VERSION=1.9.0mt10 ;;
 esac
 
