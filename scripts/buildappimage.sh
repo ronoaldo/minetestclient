@@ -3,7 +3,8 @@ set -e
 set -x
 
 # Base build directory
-export WORKSPACE="$(readlink -f $(dirname $0)/..)"
+WORKSPACE="$(readlink -f "$(dirname "$0")/..")"
+export WORKSPACE
 
 # Version -> branch calculation
 export VERSION=${VERSION:dev}
@@ -35,7 +36,7 @@ case ${BRANCH} in
     5.6.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt7  ;;
     5.6.1) export MINETEST_IRRLICHT_VERSION=1.9.0mt8  ;;
     5.7.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt10 ;;
-    master|main) export MINETEST_IRRLICHT_VERSION=1.9.0mt10 ;;
+    master|main) export MINETEST_IRRLICHT_VERSION=master ;;
 esac
 
 install_appimage_builder() {
@@ -63,9 +64,9 @@ download_sources() {
     mkdir -p /tmp/work/build
     
     pushd /tmp/work
-    git_clone https://github.com/minetest/minetest.git      ./minetest                     ${MINETEST_VERSION} 
-    git_clone https://github.com/minetest/minetest_game.git ./minetest/games/minetest_game ${MINETEST_GAME_VERSION} 
-    git_clone https://github.com/minetest/irrlicht          ./minetest/lib/irrlichtmt      ${MINETEST_IRRLICHT_VERSION}
+    git_clone https://github.com/minetest/minetest.git      ./minetest                     "${MINETEST_VERSION}"
+    git_clone https://github.com/minetest/minetest_game.git ./minetest/games/minetest_game "${MINETEST_GAME_VERSION}"
+    git_clone https://github.com/minetest/irrlicht          ./minetest/lib/irrlichtmt      "${MINETEST_IRRLICHT_VERSION}"
     popd
 }
 
@@ -91,6 +92,7 @@ build() {
         -DBUILD_CLIENT=TRUE \
         -DBUILD_UNITTESTS=FALSE \
         -DVERSION_EXTRA=unofficial
+    #shellcheck disable=2046
     make -j$(nproc)
     popd
 }
@@ -98,10 +100,12 @@ build() {
 bundle_appimage() {
     pushd /tmp/work/build
     make install DESTDIR=AppDir
-    appimage-builder --recipe $WORKSPACE/AppImageBuilder.yml
-    mkdir -p $WORKSPACE/build
-    mv *.AppImage* $WORKSPACE/build
-    chmod a+x $WORKSPACE/build/*.AppImage
+    mkdir -p AppDir/usr/share/minetest/games/minetest_game/
+    cp -r ../minetest/games/minetest_game/* AppDir/usr/share/minetest/games/minetest_game/
+    appimage-builder --recipe "$WORKSPACE/AppImageBuilder.yml"
+    mkdir -p "$WORKSPACE/build"
+    mv ./*.AppImage* "$WORKSPACE/build"
+    chmod a+x "$WORKSPACE"/build/*.AppImage
     popd
 }
 
