@@ -36,6 +36,7 @@ case ${BRANCH} in
     5.6.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt7  ;;
     5.6.1) export MINETEST_IRRLICHT_VERSION=1.9.0mt8  ;;
     5.7.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt10 ;;
+    5.8.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt13 MINETEST_GAME_VERSION=5.7.0 ;;
     master|main) export MINETEST_IRRLICHT_VERSION=master ;;
 esac
 
