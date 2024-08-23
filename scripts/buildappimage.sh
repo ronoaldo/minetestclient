@@ -38,7 +38,8 @@ case ${BRANCH} in
     5.7.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt10 ;;
     5.8.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt13 MINETEST_GAME_VERSION=5.7.0 ;;
     # 5.9.0+ has bundled irrlicht and we now have rolling release of minetest_game
-    5.9.0|master|main) ;;
+    5.9.0) export MINETEST_GAME_VERSION=master ;;
+    master|main) ;;
 esac
 
 install_appimage_builder() {
