@@ -28,7 +28,7 @@ esac
 
 export MINETEST_VERSION="${BRANCH}"
 export MINETEST_GAME_VERSION="${BRANCH}"
-export MINETEST_IRRLICHT_VERSION="master"
+export MINETEST_IRRLICHT_VERSION="none"
 # TODO(ronoaldo) detect from Github Release
 case ${BRANCH} in
     5.5.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt4  ;;
@@ -37,7 +37,8 @@ case ${BRANCH} in
     5.6.1) export MINETEST_IRRLICHT_VERSION=1.9.0mt8  ;;
     5.7.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt10 ;;
     5.8.0) export MINETEST_IRRLICHT_VERSION=1.9.0mt13 MINETEST_GAME_VERSION=5.7.0 ;;
-    master|main) export MINETEST_IRRLICHT_VERSION=master ;;
+    # 5.9.0+ has bundled irrlicht and we now have rolling release of minetest_game
+    5.9.0|master|main) ;;
 esac
 
 install_appimage_builder() {
@@ -59,7 +60,11 @@ install_appimage_builder() {
     popd
 }
 
-git_clone() { git clone "$1" "$2" && git -C "$2" checkout "$3" ; }
+git_clone() {
+	git clone "$1" "$2"
+	git -C "$2" checkout "$3"
+	rm -rf "${2}/.git"
+}
 
 download_sources() {
     mkdir -p /tmp/work/build
@@ -67,19 +72,22 @@ download_sources() {
     pushd /tmp/work
     git_clone https://github.com/minetest/minetest.git      ./minetest                     "${MINETEST_VERSION}"
     git_clone https://github.com/minetest/minetest_game.git ./minetest/games/minetest_game "${MINETEST_GAME_VERSION}"
-    git_clone https://github.com/minetest/irrlicht          ./minetest/lib/irrlichtmt      "${MINETEST_IRRLICHT_VERSION}"
+    if [ "${MINETEST_IRRLICHT_VERSION}" != "none" ]; then
+        git_clone https://github.com/minetest/irrlicht      ./minetest/lib/irrlichtmt      "${MINETEST_IRRLICHT_VERSION}"
+    fi
     popd
 }
 
 install_build_dependencies() {
     apt-get update
-    apt-get install build-essential cmake git \
-        gettext libbz2-dev libcurl4-gnutls-dev \
-        libfreetype6-dev libglu1-mesa-dev libgmp-dev libluajit-5.1-dev \
-        libjpeg-dev libjsoncpp-dev libleveldb-dev libxi-dev \
-        libogg-dev libopenal-dev libpng-dev libspatialindex-dev \
-        libsqlite3-dev libvorbis-dev libx11-dev libxxf86vm-dev libzstd-dev \
-        zlib1g-dev git unzip gtk-update-icon-cache -yq
+    # appimage requirements
+    apt-get install gpg gtk-update-icon-cache git -yq
+    # minetest requirements
+    apt-get install \
+        g++ make libc6-dev cmake libpng-dev libjpeg-dev libgl1-mesa-dev \
+        libsqlite3-dev libogg-dev libvorbis-dev libopenal-dev \
+        libcurl4-gnutls-dev libfreetype6-dev zlib1g-dev libgmp-dev libjsoncpp-dev \
+        libzstd-dev libluajit-5.1-dev gettext libsdl2-dev -yq
     apt-get clean
 }
 
