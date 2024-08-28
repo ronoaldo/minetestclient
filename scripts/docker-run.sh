@@ -7,8 +7,8 @@ LOG=build/build.log
 WORK=$(mktemp -d)
 
 docker run --rm \
-    -v $PWD:/workspace \
-    -v $WORK:/tmp/work \
+    -v "$PWD:/workspace" \
+    -v "$WORK:/tmp/work" \
     -e VERSION=${VERSION:-dev} \
     debian:bullseye /workspace/$1 2>&1 | tee $LOG
 
