@@ -4,7 +4,7 @@ set -o pipefail
 
 mkdir -p build/
 LOG=build/build.log
-WORK=$(mktemp -d)
+WORK="$(mktemp -d -t luantibuild.XXXXXX)"
 
 docker run --rm \
     -v "$PWD:/workspace" \
